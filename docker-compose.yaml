@@ -1,0 +1,36 @@
+version: "3.7"
+services:
+
+  nethermind:
+    hostname: nethermind
+    container_name: nethermind
+    image: nethermind/nethermind:latest
+    restart: always
+    stop_grace_period: 1m
+    networks:
+      net:
+        ipv4_address: 192.168.32.100
+    ports:
+      - "30303:30303/tcp"
+      - "30303:30303/udp"
+      - 8545:8545
+    volumes:
+      - ./nethermind_db:/nethermind/nethermind_db
+      - ./keystore:/nethermind/keystore
+      - ./logs:/nethermind/logs
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - NETHERMIND_CONFIG=xdai_archive
+      - NETHERMIND_JSONRPCCONFIG_ENABLED=true
+      - NETHERMIND_JSONRPCCONFIG_HOST=0.0.0.0
+      - NETHERMIND_NETWORKCONFIG_MAXACTIVEPEERS=1024
+    logging:
+      driver: "local"
+
+networks:
+  net:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.32.0/24"
